@@ -1,0 +1,18 @@
+declarations:
+  feature: "Funcionalidade"
+  context: "Contexto"
+  scenario: "Cenário"
+
+commands:
+  given: "Dado que {assertion}"
+  when: "Quando eu {action} {element}"
+  and: "E que {assertion}"
+  then: "Então eu espero que {assertion}"
+
+actions:
+  click: "clicar [em|no|na]"
+
+assertions:
+  redirect: "redirecionado para {path}"
+  appear: "apareça {text} em [um|uma] {element}"
+
