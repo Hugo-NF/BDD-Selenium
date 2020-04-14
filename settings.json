@@ -1,0 +1,13 @@
+{
+  "logging": {
+    "path_format": "logs/SeleniumBDD_{datetime}.log",
+    "minimum_level": "INFO",
+    "file_count_limit": 7,
+    "file_size_limit_bytes": 128000000,
+    "writing_mode": "a",
+    "log_format": "%(asctime)s :: %(levelname)s - %(message)s",
+    "asctime_format'": "%d/%m/%y %H:%M:%S",
+    "encoding": "utf8",
+    "flush_delay": false
+  }
+}

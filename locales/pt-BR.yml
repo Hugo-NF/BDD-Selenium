@@ -1,7 +1,7 @@
 declarations:
   feature: "Funcionalidade"
-  context: "Contexto"
-  scenario: "Cenário"
+  step: "Passo"
+  scenario: "Cenario"
 
 commands:
   given: "Dado que {assertion}"

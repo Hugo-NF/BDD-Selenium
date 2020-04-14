@@ -1,0 +1,18 @@
+declarations:
+  feature: "Feature"
+  step: "Step"
+  scenario: "Scenario"
+
+commands:
+  given: "Given that {assertion}"
+  when: "When I {action} {element}"
+  and: "And {assertion}"
+  then: "Then I expect {assertion}"
+
+actions:
+  click: "click [em|no|na]"
+
+assertions:
+  redirect: "redirect to {path}"
+  appear: "appear {text} in [a|an] {element}"
+
