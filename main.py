@@ -1,14 +1,20 @@
+# CLI inputs support built-in package
 import argparse
+
+# Logging built-in package
 import logging
-from definitions import *
 from logging.handlers import RotatingFileHandler
+
+# Datetime built-in package
 from datetime import datetime
-import os
-import json
-import yaml
-from utils import *
+
+# Module for generate files
 from generators import *
 
+# Program definitions, constants, enums,....
+from definitions import *
+
+from SeleniumService import SeleniumService
 
 # PEP 8 Conventions
 # https://www.python.org/dev/peps/pep-0008/#overriding-principle
@@ -59,41 +65,30 @@ def setup_logging():
 
 
 if __name__ == '__main__':
+
     # Setting up log module
     setup_logging()
 
     logger = logging.getLogger(LOGGER_INSTANCE)
-
-    # Adding a new argument parser (CLI inputs)
-    parser = argparse.ArgumentParser(description='BDD Tester with Selenium',
-                                     epilog="")
-
     logger.info("Starting a new session for {user}. PID: {pid}.".format(user=os.getlogin(), pid=os.getpid()))
 
-    group = parser.add_mutually_exclusive_group(required=True)
+    # Adding a new argument parser (CLI inputs)
+    parser = argparse.ArgumentParser(description='BDD Tester with Selenium v.{version}'.format(version=VERSION),
+                                     epilog="This software is intended to automatize the testing of any web "
+                                            "application. Write and execute Behavior tests with ease")
 
-    group.add_argument('-env', '--environment', nargs='?',
-                       help='Path to json environment file, contains all needed variables to start the program')
-    group.add_argument('-g', '--generate', nargs='+',
-                       help='Generator command.'
-                            '\n\tYou can use this tool to generate the files needed, probably inside a new project.'
-                            '\n\tAvaliable options:'
-                            '\n\t\tENV [output_path]: generates a new environment json file'
-                            '\n\t\tFEATURES [output_path]: generates a new features path with examples'
-                            '\n\t\tALL [output_path]: generates everything you need')
+    parser_group = parser.add_mutually_exclusive_group()
 
-    parser.add_argument('--features', nargs='?',
-                        help="Path to features folder. Not needed when using environment json.")
-    parser.add_argument('--factories', nargs='?',
-                        help="Path to factories folder. Not needed when using environment json.")
-    parser.add_argument('--scenarios', nargs='?',
-                        help="Path to scenarios folder. Not needed when using environment json.")
-    parser.add_argument('-r', '--root', nargs='?',
-                        help="Root address of the application. Not needed when using environment json.")
-    parser.add_argument('-l', '--locale', nargs="?", default='en-US',
-                        choices=['pt-BR', 'en-US'], help='Change the locale of your files. '
-                                                         'Not needed when using environment json.')
+    parser_group.add_argument('-e', '--environment', default='environment.json', type=str, dest='environment',
+                              help='Path to json environment file, contains all needed variables to start the program')
 
+    parser_group.add_argument('-g', '--generate', nargs=2,
+                              help='Generator command.'
+                              '\n\tYou can use this tool to generate the files needed, probably inside a new project.'
+                              '\n\tAvailable options:'
+                              '\n\t\tENV [output_path]: generates a new environment json file'
+                              '\n\t\tFEATURES [output_path]: generates a new features path with examples'
+                              '\n\t\tALL [output_path]: generates everything you need')
     args = parser.parse_args()
 
     if args.generate:
@@ -104,10 +99,4 @@ if __name__ == '__main__':
             print("Error: Unknown %s generator option" % args.generate[1])
 
     elif args.environment:
-        print("Environment option loading")
-
-    elif args.features and args.factories and args.scenarios and args.root:
-        print("Specified options")
-
-    else:
-        print("Missing options")
+        service = SeleniumService(args.environment)

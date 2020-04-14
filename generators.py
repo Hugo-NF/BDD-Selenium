@@ -11,7 +11,7 @@ def generate_environment(full_path):
             "language": "en-US",
             "paths": {
                 "features_path": path_only + '/features',
-                "factories_path": path_only + '/factories',
+                "steps_path": path_only + '/steps',
                 "scenarios_path": path_only + '/scenarios'
             }
         }, fp, indent=4)
