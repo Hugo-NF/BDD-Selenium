@@ -1,11 +1,11 @@
 declarations:
-  feature: "Funcionalidade"
-  step: "Passo"
-  scenario: "Cenario"
-  factory: "Fabrica"
+  funcionalidade: "feature"
+  passo: "step"
+  cenario: "scenario"
+  fabrica: "factory"
 
 verbs:
-  given: "Dado"
-  when: "Quando"
-  and: "E"
-  then: "Entao"
+  dado: "given"
+  quando: "when"
+  e: "and"
+  entao: "then"

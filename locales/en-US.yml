@@ -1,11 +1,11 @@
 declarations:
-  feature: "Feature"
-  step: "Step"
-  scenario: "Scenario"
-  factory: "Factory"
+  feature: "feature"
+  step: "step"
+  scenario: "scenario"
+  factory: "factory"
 
 verbs:
-  given: "Given"
-  when: "When"
-  and: "And"
-  then: "Then"
+  given: "given"
+  when: "when"
+  and: "and"
+  then: "then"
