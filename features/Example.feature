@@ -4,7 +4,7 @@ Feature: Login
   As a previous registered user
   I want to sign in and sign out the application
 
-  Scenario: Correct Password
+  Scenario: Correct Password # encoding: utf-8
     Given that I am at "login" page
     When I fill the form with:
       |Email|hugo.fonseca@grupoorion.eng.br|

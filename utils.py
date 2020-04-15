@@ -1,4 +1,6 @@
 import os
+from regexp import RegularExpressions
+from re import sub, match
 
 
 def correct_file_extension(path, extension):
@@ -18,3 +20,16 @@ def get_value_or_default(dictionary, key, default_value):
         return dictionary[key]
     except KeyError:
         return default_value
+
+
+def pre_process_file(file_path):
+    with open(file_path, 'r', encoding='utf8') as fp:
+        lines = fp.readlines()
+
+        # Removing comments
+        lines = list(map(lambda x: sub(RegularExpressions.regexps['comment'], '', x), lines))
+        # Removing blank lines
+        lines = list(filter(lambda x: not match(RegularExpressions.regexps['blank_line'], x), lines))
+        # Removing line breaks
+        lines = list(map(lambda x: sub(RegularExpressions.regexps['line_break'], '', x), lines))
+        return lines
