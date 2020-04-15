@@ -5,6 +5,8 @@ import json
 import yaml
 import glob
 from feature import Feature
+import importlib
+import sys
 
 
 class SeleniumService:
@@ -14,6 +16,7 @@ class SeleniumService:
         self.environment = self.load_environment_from_json(env_path)
         self.locale = self.load_locale()
         self.filenames = self.find_files()
+        self.loaded_steps = {}
         self.features = []
 
     def load_environment_from_json(self, env_path):
@@ -63,6 +66,13 @@ class SeleniumService:
         }
 
     def run(self, features=None):
+
+        # Loading all steps
+        sys.path.append(self.environment['paths']['steps_path'])
+        for step in self.filenames['steps']:
+            module_name = extract_module_name(step)
+            self.loaded_steps.setdefault(module_name, importlib.import_module(module_name, package=False))
+
         if features is None:
             features = self.filenames['features']
 

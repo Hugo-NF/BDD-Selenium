@@ -15,6 +15,15 @@ def extract_path(full_path):
     return os.path.split(full_path)
 
 
+def extract_filename(full_path):
+    return os.path.basename(full_path)
+
+
+def extract_module_name(full_path):
+    filename = extract_filename(full_path)
+    return os.path.splitext(filename)[0]
+
+
 def get_value_or_default(dictionary, key, default_value):
     try:
         return dictionary[key]
