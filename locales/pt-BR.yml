@@ -2,17 +2,10 @@ declarations:
   feature: "Funcionalidade"
   step: "Passo"
   scenario: "Cenario"
+  factory: "Fabrica"
 
-commands:
-  given: "Dado que {assertion}"
-  when: "Quando eu {action} {element}"
-  and: "E que {assertion}"
-  then: "Então eu espero que {assertion}"
-
-actions:
-  click: "clicar [em|no|na]"
-
-assertions:
-  redirect: "redirecionado para {path}"
-  appear: "apareça {text} em [um|uma] {element}"
-
+verbs:
+  given: "Dado"
+  when: "Quando"
+  and: "E"
+  then: "Entao"

@@ -1,9 +1,10 @@
 {
   "root_path": "https://orionconnect.azurewebsites.net",
   "language": "pt-BR",
+  "tab_size": 2,
   "paths": {
-    "features_path": "",
-    "steps_path": "",
-    "scenarios_path": ""
+    "features_path": "features/",
+    "steps_path": "steps/",
+    "factories_path": "factories/"
   }
 }

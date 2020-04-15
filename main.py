@@ -14,7 +14,7 @@ from generators import *
 # Program definitions, constants, enums,....
 from definitions import *
 
-from SeleniumService import SeleniumService
+from selenium_service import SeleniumService
 
 # PEP 8 Conventions
 # https://www.python.org/dev/peps/pep-0008/#overriding-principle
@@ -60,7 +60,7 @@ def setup_logging():
             logger.addHandler(console_handler)
 
     except FileNotFoundError:
-        print("FATAL ERROR: settings.json file %s do NOT exists." % args.environment)
+        logger.critical("FATAL ERROR: settings.json file %s do NOT exists." % args.environment)
         exit(ErrorCodes.MISSING_SETTINGS)
 
 
@@ -82,6 +82,9 @@ if __name__ == '__main__':
     parser_group.add_argument('-e', '--environment', default='environment.json', type=str, dest='environment',
                               help='Path to json environment file, contains all needed variables to start the program')
 
+    parser_group.add_argument('-r', '--run', type=str, dest='run', required=False,
+                              help='Specify the features you wish to run')
+
     parser_group.add_argument('-g', '--generate', nargs=2,
                               help='Generator command.'
                               '\n\tYou can use this tool to generate the files needed, probably inside a new project.'
@@ -96,7 +99,12 @@ if __name__ == '__main__':
             generator = generators[args.generate[0]]
             generator(args.generate[1])
         except KeyError:
-            print("Error: Unknown %s generator option" % args.generate[1])
+            logger.error("Unknown %s generator option" % args.generate[0])
 
     elif args.environment:
         service = SeleniumService(args.environment)
+        if args.run:
+            service.run(args.run.split(","))
+        else:
+            service.run()
+

@@ -12,7 +12,7 @@ def generate_environment(full_path):
             "paths": {
                 "features_path": path_only + '/features',
                 "steps_path": path_only + '/steps',
-                "scenarios_path": path_only + '/scenarios'
+                "factories_path": path_only + '/factories'
             }
         }, fp, indent=4)
 
