@@ -1,6 +1,6 @@
 {
   "root_path": "https://orionconnect.azurewebsites.net",
-  "language": "pt-BR",
+  "language": "en-US",
   "tab_size": 2,
   "paths": {
     "features_path": "features/",

@@ -8,9 +8,7 @@ import yaml
 
 from definitions import *
 from feature import Feature
-from runtime_reference import RuntimeReference
 from utils import *
-
 
 class SeleniumService:
     def __init__(self, env_path):
@@ -19,9 +17,8 @@ class SeleniumService:
         self.environment = self.load_environment_from_json(env_path)
         self.locale = self.load_locale()
         self.filenames = self.find_files()
-        self.runtime = RuntimeReference()
+        self.runtime = {}
         self.loaded_steps = {}
-        self.features = []
 
     def load_environment_from_json(self, env_path):
         try:
@@ -88,4 +85,4 @@ class SeleniumService:
             features = self.filenames['features']
 
         for feature_filename in features:
-            self.features.append(Feature(feature_filename, self.loaded_steps, self.environment, self.locale))
+            Feature(feature_filename, self.loaded_steps, self.environment, self.locale, self.runtime)

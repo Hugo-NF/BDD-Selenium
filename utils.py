@@ -1,6 +1,6 @@
 import os
-from regexp import RegularExpressions
 from re import sub, match
+from definitions import *
 
 
 def correct_file_extension(path, extension):
@@ -22,6 +22,10 @@ def extract_filename(full_path):
 def extract_module_name(full_path):
     filename = extract_filename(full_path)
     return os.path.splitext(filename)[0]
+
+
+def check_indentation(indent_obj):
+    return indent_obj[0] == (indent_obj[1] * indent_obj[2])
 
 
 def get_value_or_default(dictionary, key, default_value):

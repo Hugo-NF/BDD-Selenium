@@ -1,10 +1,10 @@
-declarations:
+statements:
   feature: "feature"
-  step: "step"
   scenario: "scenario"
   factory: "factory"
 
 verbs:
+  pular: "skip"
   given: "given"
   when: "when"
   and: "and"

@@ -1,10 +1,10 @@
-declarations:
+statements:
   funcionalidade: "feature"
-  passo: "step"
   cenario: "scenario"
   fabrica: "factory"
 
 verbs:
+  pular: "skip"
   dado: "given"
   quando: "when"
   e: "and"
