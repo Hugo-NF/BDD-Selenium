@@ -1,14 +1,23 @@
+"""BDD-Selenium - definitions.py
+This file contains all the constants needed to run the program accordingly
+"""
+
+# built-in package for Enumeration
 from enum import Enum
 
 # Macro definitions
+""" The following variables are used as macros across the program """
 VERSION = '0.0.2beta'
-
 LOGGER_INSTANCE = "SeleniumBDD.root"
 LOCALES_ROOT = "locales/"
 
 
 # Program Error Codes Enumeration
 class ErrorCodes(Enum):
+    """
+    The ErrorCodes class defines all possible errors that can occur during the application runtime
+    It's main purpose is providing a more legible error interface with the programmer and user
+    """
     OK = 0
     MISSING_PROPERTY = 1
     MISSING_SETTINGS = 2
@@ -22,6 +31,10 @@ class ErrorCodes(Enum):
 
 # Execution status codes for a step
 class ExecutionStatus(Enum):
+    """
+    The ExecutionStatus class defines an Enumeration of all possible states of the entities of the software
+    These status codes are used in Features, Factories and Steps
+    """
     PASSED = 0
     FAILED = 1
     PENDING_EXECUTION = 2
@@ -34,6 +47,12 @@ class ExecutionStatus(Enum):
 
 # Regular expressions lookup table (EDIT CAREFULLY)
 class RegularExpressions:
+    """
+    The RegularExpressions class works like an lookup table for regular expressions
+
+    Attributes:
+        regexps: static member consisting of a python dictionary that takes strings into regexps
+    """
     regexps = {
         'blank_line': r'^\s*$',
         'comment': r'#.*',

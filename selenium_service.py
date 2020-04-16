@@ -10,6 +10,7 @@ from definitions import *
 from feature import Feature
 from utils import *
 
+
 class SeleniumService:
     def __init__(self, env_path):
         self.logger = logging.getLogger(LOGGER_INSTANCE)
@@ -81,8 +82,6 @@ class SeleniumService:
                                     % (module_name, traceback.format_exc()))
         self.logger.info("%d step modules loaded" % (len(self.loaded_steps)))
 
-        if features is None:
-            features = self.filenames['features']
-
-        for feature_filename in features:
+        # Mounting dependencies
+        for feature_filename in self.filenames['features']:
             Feature(feature_filename, self.loaded_steps, self.environment, self.locale, self.runtime)
