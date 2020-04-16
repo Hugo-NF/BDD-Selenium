@@ -31,6 +31,7 @@ class Feature:
                     localized_statement = locale['statements'][statement.lower()]
                     if localized_statement == 'feature':
                         if check_indentation((indentation, env_variables['tab_size'], 0)):
+                            self.logger.info("New feature %s detected. Processing..." % name)
                             current_feature = self.process_feature(name, features_dict)
                         else:
                             self.logger.error("Unexpected indent at statement:\n\t%s\n\u2191\u2191\u2191\u2191" % line)
@@ -39,6 +40,7 @@ class Feature:
                     elif localized_statement == 'scenario':
                         if len(current_feature):
                             if check_indentation((indentation, env_variables['tab_size'], 1)):
+                                self.logger.info("New scenario %s detected for feature %s" % (name, current_feature))
                                 current_scenario = self.process_scenario(name, features_dict, current_feature)
                             else:
                                 self.logger.error("Unexpected indent at statement:\n\t%s\n\u2191\u2191\u2191\u2191"
@@ -64,7 +66,7 @@ class Feature:
                 indentation = len(groups[0])
                 verb = groups[1].lower()
                 step_name = groups[2]
-                print(verb, step_name)
+
                 if Feature.is_verb(locale, verb):
                     verb = locale['verbs'][verb]
                     if check_indentation((indentation, env_variables['tab_size'], 2)):
@@ -73,9 +75,11 @@ class Feature:
                         if verb == 'do':
                             cmd = step_name.lower()
                             if cmd == 'skip':
-                                print("%s scenario skipped", current_scenario)
+                                self.logger.info("Skipping %s scenario (below feature: %s)"
+                                                 % (current_scenario, current_feature))
                                 current_skipped = current_scenario
                                 scenario['status'] = ExecutionStatus.SKIPPED
+
                         if current_skipped != current_scenario:
                             step_attr = Feature.process_step_name(step_name)
 
@@ -139,10 +143,14 @@ class Feature:
     @staticmethod
     def get_step_ref(current_feature, steps, verb, step_name):
         module_key = current_feature.lower() + '_steps'
-
-        di_module = steps[module_key]
-        verb_class = getattr(di_module, verb.capitalize())
-        return getattr(verb_class, step_name)
+        try:
+            di_module = steps[module_key]
+            verb_class = getattr(di_module, verb.capitalize())
+            return staticmethod(getattr(verb_class, step_name))
+        except (AttributeError, KeyError):
+            di_module = steps['common_steps']
+            verb_class = getattr(di_module, verb.capitalize())
+            return staticmethod(getattr(verb_class, step_name))
 
     @staticmethod
     def process_step_name(step_name):
@@ -172,5 +180,5 @@ class Feature:
         if name not in features_dict[parent_feature]:
             features_dict[parent_feature]['scenarios'][name] = {'steps': [], 'status': ExecutionStatus.PENDING}
         else:
-            self.logger.error("Scenario %s was redeclared. Ignoring redeclaration..." % name)
+            self.logger.warning("Scenario %s was redeclared. Ignoring redeclaration..." % name)
         return name
