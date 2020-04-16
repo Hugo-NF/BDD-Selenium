@@ -4,7 +4,7 @@ statements:
   factory: "factory"
 
 verbs:
-  pular: "skip"
+  do: "do"
   given: "given"
   when: "when"
   and: "and"

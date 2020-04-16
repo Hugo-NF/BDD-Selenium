@@ -4,7 +4,7 @@ statements:
   fabrica: "factory"
 
 verbs:
-  pular: "skip"
+  faca: "do"
   dado: "given"
   quando: "when"
   e: "and"
