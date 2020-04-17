@@ -5,11 +5,11 @@ Feature: Login
   I want to sign in and sign out the application
 
   Scenario: Correct Password
-    Given that I am at "login" page
+    Given that I am at "Login" page
     When I fill the form with
       |Email|hugo.fonseca@grupoorion.eng.br|
-      |Password|123456|
-    And I click on "Entrar" button
+      |Password|123456789|
+    And I submit form
     Then I should be redirected to "Dashboard" page
 
 Feature: Register
@@ -17,10 +17,10 @@ Feature: Register
   I want to register on platform
 
   Scenario: Correct Email
-    Factory: As an authenticated user
+    Do skip
     Given that I am at "register" page
     When I fill the form with
       |Email|hugo.fonseca@grupoorion.eng.br|
-      |Password|123456|
+      |Password|123456789|
     And I click on "Registrar" button
     Then I should be redirected to "Home" page

@@ -13,6 +13,7 @@ import yaml
 
 from datetime import datetime
 from feature import Feature
+from selenium_runtime import selenium_runtime
 from utils import *
 
 
@@ -156,7 +157,7 @@ class ExecutionService:
         self.logger.info("Execution started. Requested features: {features}"
                          .format(features='All' if features is None else ', '.join(features)))
 
-        # Specific features ?
+        # Actually executing the tests
         features = self.runtime.keys() if features is None else features
         for feature in features:
             print('Executing "%s" feature' % feature)
@@ -196,4 +197,5 @@ class ExecutionService:
             else:
                 self.logger.error('Requested feature "%s" was not present on test files' % feature)
 
+        selenium_runtime.browser.quit()
         self.display_results()

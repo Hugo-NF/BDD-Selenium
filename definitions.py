@@ -10,6 +10,7 @@ from enum import Enum
 VERSION = '0.0.2beta'
 LOGGER_INSTANCE = "SeleniumBDD.root"
 LOCALES_ROOT = "locales/"
+TARGET_BROWSER = 'firefox'
 
 
 # Program Error Codes Enumeration
