@@ -160,7 +160,6 @@ class ExecutionService:
         # Actually executing the tests
         features = self.runtime.keys() if features is None else features
         for feature in features:
-            print('Executing "%s" feature' % feature)
             if feature in self.runtime:
                 feature_obj = self.runtime[feature]
                 feature_obj['status'] = ExecutionStatus.RUNNING

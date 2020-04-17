@@ -17,6 +17,8 @@ def generate_environment(full_path):
     with open(rev_path, 'w', encoding='utf-8') as fp:
         json.dump({
             "language": "en-US",
+            "tab_size": 2,
+            "dump_results_json": True,
             "paths": {
                 "features_path": path_only + '/features',
                 "steps_path": path_only + '/steps',

@@ -11,6 +11,12 @@ from definitions import *
 
 
 class SeleniumRuntime:
+    """
+    This class works like a singleton containing a single instance of the browser environment
+
+    Attributes:
+        logger: logger instance gathered from logging module, acts like a singleton
+    """
 
     def __init__(self):
         self.logger = logging.getLogger(LOGGER_INSTANCE)

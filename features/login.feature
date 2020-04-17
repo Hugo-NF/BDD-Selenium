@@ -5,12 +5,12 @@ Feature: Login
   I want to sign in and sign out the application
 
   Scenario: Correct Password
-    Given that I am at "Login" page
+    Given that I am at "http://orionconnect.azurewebsites.net/Auth/Login" page
     When I fill the form with
       |Email|hugo.fonseca@grupoorion.eng.br|
       |Password|123456789|
     And I submit form
-    Then I should be redirected to "Dashboard" page
+    Then I should be redirected to "http://orionconnect.azurewebsites.net/Dashboard" page
 
 Feature: Register
   As a not registered user
