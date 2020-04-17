@@ -27,6 +27,7 @@ class ErrorCodes(Enum):
     MISSING_TRANSLATION = 6
     UNKNOWN_TRANSLATION = 7
     SYNTAX_ERROR = 8
+    SEMANTIC_ERROR = 9
 
 
 # Execution status codes for a step
@@ -39,7 +40,7 @@ class ExecutionStatus(Enum):
     FAILED = 1
     PENDING_EXECUTION = 2
     PENDING_SOLVING = 3
-    MISSING_STEP = 4
+    MISSING_REF = 4
     RUNTIME_ERROR = 5
     SKIPPED = 6
     PENDING = 7

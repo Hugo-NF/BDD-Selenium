@@ -14,12 +14,13 @@ class Feature:
         file_content: array of strings containing the file after pre-processing
     """
 
-    def __init__(self, file_path, steps, env_variables, locale, features_dict):
+    def __init__(self, file_path, steps, factories, env_variables, locale, features_dict):
         """
         Class Feature constructor
 
         :param file_path: file path to feature file
         :param steps: dictionary with loaded_steps (read-only)
+        :param factories: dictionary with loaded_factories (read-only)
         :param env_variables: dictionary with environment variables (read-only)
         :param locale: dictionary of the loaded locale (read-only)
         :param features_dict: dictionary with the traceback of the features (modified by reference)
@@ -27,13 +28,14 @@ class Feature:
         self.logger = logging.getLogger(LOGGER_INSTANCE)
         self.file_content = pre_process_file(file_path)
 
-        self.process_file(steps, env_variables, locale, features_dict)
+        self.process_file(steps, factories, env_variables, locale, features_dict)
 
-    def process_file(self, steps, env_variables, locale, features_dict):
+    def process_file(self, steps, factories, env_variables, locale, features_dict):
         """
         Iterates through each line of the file_content variable and takes the correct action
 
         :param steps: dictionary with loaded_steps (read-only)
+        :param factories: dictionary with loaded_factories (read-only)
         :param env_variables: dictionary with environment variables (read-only)
         :param locale: dictionary of the loaded locale (read-only)
         :param features_dict: dictionary with the traceback of the features (modified by reference)
@@ -53,6 +55,7 @@ class Feature:
                 indentation = len(groups[0])
                 statement = groups[1]
                 name = groups[2]
+
                 try:
                     localized_statement = locale['statements'][statement.lower()]
                     if localized_statement == 'feature':
@@ -71,12 +74,48 @@ class Feature:
                             else:
                                 self.logger.error("Unexpected indent at statement:\n\t%s\n\u2191\u2191\u2191\u2191"
                                                   % line)
-                                return ErrorCodes.SYNTAX_ERROR
+                                return ErrorCodes.SEMANTIC_ERROR
                         else:
                             self.logger.error("Scenario statement (%s) without a previous Feature" % line)
 
                     elif localized_statement == 'factory':
-                        self.logger.warning('Factories are not implemented yet')
+                        if len(current_scenario):
+                            if check_indentation((indentation, env_variables['tab_size'], 2)):
+                                self.logger.info('New reference to factory "%s" detected (below scenario %s)...'
+                                                 ' Solving pending' % (name, current_scenario))
+                                scenario_steps = features_dict[current_feature]['scenarios'][current_scenario]['steps']
+                                factory_class_name = Feature.generate_factory_name(name)
+
+                                try:
+                                    factory_ref = Feature.get_factory_ref(factory_class_name, factories,
+                                                                          current_feature)
+                                    self.logger.info("Factory %s reference found." % name)
+                                    scenario_steps.append({
+                                        'name': name,
+                                        'args': [],
+                                        'status': ExecutionStatus.PENDING_EXECUTION,
+                                        'ref': factory_ref,
+                                        'details': None,
+                                        'method_name': factory_class_name,
+                                        'verb': 'factory'
+                                    })
+
+                                except (AttributeError, KeyError):
+                                    self.logger.error("Could not solve reference to %s factory..." % name)
+                                    scenario_steps.append({
+                                        'name': name,
+                                        'args': [],
+                                        'status': ExecutionStatus.MISSING_REF,
+                                        'ref': None,
+                                        'details': None,
+                                        'method_name': factory_class_name,
+                                        'verb': 'factory'
+                                    })
+                            else:
+                                self.logger.error("Unexpected indent at statement:\n\t%s\n\u2191\u2191\u2191\u2191"
+                                                  % line)
+                        else:
+                            self.logger.error("Factory statement (%s) without a previous Scenario" % line)
 
                     else:
                         self.logger.critical(
@@ -116,8 +155,9 @@ class Feature:
                                 step_attr['ref'] = step_ref
                                 step_attr['status'] = ExecutionStatus.PENDING_EXECUTION
                             except (AttributeError, KeyError):
-                                self.logger.warning("Undefined step (below feature %s): %s" % (current_feature, step_name))
-                                step_attr['status'] = ExecutionStatus.MISSING_STEP
+                                self.logger.warning("Undefined step (below feature %s): %s"
+                                                    % (current_feature, step_name))
+                                step_attr['status'] = ExecutionStatus.MISSING_REF
 
                             finally:
                                 scenario['steps'].append(step_attr)
@@ -206,6 +246,33 @@ class Feature:
             return staticmethod(getattr(verb_class, step_name))
 
     @staticmethod
+    def get_factory_ref(factory_class_name, factories, parent_feature):
+        """
+        Search for a factory definition inside feature_factories module
+        If factory is not found inside feature_factories, search inside common_factories
+        If not found inside common_factories, raise AttributeError
+
+        :param factory_class_name: name of the factory class (Python PEP 8 standardization)
+        :param factories: dictionary with loaded_factories (read-only)
+        :param parent_feature: current feature where the factory is being used
+        :raise AttributeError (Step undefined)
+        :raise KeyError (Module not loaded)
+        :return: staticmethod reference pointer
+        """
+        module_key = parent_feature.lower() + '_factories'
+
+        try:
+            di_module = factories[module_key]
+            factory_class = getattr(di_module, factory_class_name)
+            run_method = getattr(factory_class, 'run')
+            return staticmethod(run_method)
+        except (AttributeError, KeyError):
+            di_module = factories['common_factories']
+            factory_class = getattr(di_module, factory_class_name)
+            run_method = getattr(factory_class, 'run')
+            return staticmethod(run_method)
+
+    @staticmethod
     def process_step_name(step_name):
         """
         Text processing step_name to Python PEP 8 naming conventions which should be used to write steps
@@ -226,6 +293,18 @@ class Feature:
         step_name = re.sub(RegularExpressions.regexps['step_args'], '', step_name)
         step_dict['method_name'] = re.sub(RegularExpressions.regexps['spaces'], '_', step_name)
         return step_dict
+
+    @staticmethod
+    def generate_factory_name(factory_name):
+        """
+        Generates the PEP 8 name for factories
+        :param factory_name: string with the factory_name from .feature
+        :return: corrected string
+        """
+
+        split_names = re.split(r'\s+', factory_name)
+        split_names = list(map(lambda x: x.capitalize(), split_names))
+        return ''.join(split_names)
 
     def process_feature(self, name, features_dict):
         """

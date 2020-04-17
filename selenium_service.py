@@ -143,7 +143,8 @@ class SeleniumService:
 
         # Mounting dependencies
         for feature_filename in self.filenames['features']:
-            Feature(feature_filename, self.loaded_steps, self.environment, self.locale, self.runtime)
+            Feature(feature_filename, self.loaded_steps, self.loaded_factories,
+                    self.environment, self.locale, self.runtime)
 
         self.logger.info("Dependency tree complete... Will init execution\n\n")
         self.logger.info("Execution started. Requested features: {features}"

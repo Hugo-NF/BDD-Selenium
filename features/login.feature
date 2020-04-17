@@ -17,6 +17,7 @@ Feature: Register
   I want to register on platform
 
   Scenario: Correct Email
+    Factory: As an authenticated user
     Given that I am at "register" page
     When I fill the form with
       |Email|hugo.fonseca@grupoorion.eng.br|
