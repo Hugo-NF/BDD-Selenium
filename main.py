@@ -1,3 +1,7 @@
+"""
+This file, as the name suggests, the entry point for executing the test session
+"""
+
 # CLI inputs support built-in package
 import argparse
 
@@ -19,7 +23,14 @@ from selenium_service import SeleniumService
 # PEP 8 Conventions
 # https://www.python.org/dev/peps/pep-0008/#overriding-principle
 
+
 def setup_logging():
+    """Configures the logger instance SeleniumBDD.root to usage across all the application
+
+    The logger settings are defined in settings.json
+
+    :return:
+    """
     try:
         with open('settings.json', 'r') as settings_file:
             env_settings = json.load(settings_file)

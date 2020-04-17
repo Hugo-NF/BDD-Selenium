@@ -1,5 +1,4 @@
 import logging
-from definitions import *
 from utils import *
 import re
 
