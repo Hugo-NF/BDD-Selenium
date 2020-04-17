@@ -41,9 +41,9 @@ class ExecutionStatus(Enum):
     PENDING_EXECUTION = 2
     PENDING_SOLVING = 3
     MISSING_REF = 4
-    RUNTIME_ERROR = 5
-    SKIPPED = 6
-    PENDING = 7
+    SKIPPED = 5
+    PENDING = 6
+    RUNNING = 7
 
 
 # Regular expressions lookup table (EDIT CAREFULLY)

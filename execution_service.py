@@ -1,4 +1,4 @@
-"""BDD-Selenium - selenium_service.py
+"""BDD-Selenium - execution_service.py
 This file defines the principal service definition of application,
 which contains all the environment variables, localization, dependency tree and so on...
 """
@@ -11,13 +11,14 @@ import sys
 import traceback
 import yaml
 
+from datetime import datetime
 from feature import Feature
 from utils import *
 
 
-class SeleniumService:
+class ExecutionService:
     """
-    Selenium Service
+    Execution Service
     This class is responsible for loading the environment and performs the testing in a abstract way
     by calling methods on other modules
 
@@ -102,6 +103,11 @@ class SeleniumService:
             'factories': factories_files
         }
 
+    def display_results(self):
+        """Pretty printer of the results, dumps to JSON if requested in environment"""
+        self.logger.info("Testing session completed. Displaying results:")
+        self.logger.info(self.runtime)
+
     def run(self, features=None):
         """Opens all the detected files and handles the execution by calling other modules
 
@@ -115,7 +121,7 @@ class SeleniumService:
 
         for step in self.filenames['steps']:
             module_name = extract_module_name(step)
-            self.logger.info("Loading module %s ..." % module_name)
+            self.logger.info("Loading module %s..." % module_name)
             try:
                 self.loaded_steps.setdefault(module_name, importlib.import_module(module_name, package=False))
                 self.logger.info("Module %s loaded successfully" % module_name)
@@ -149,3 +155,45 @@ class SeleniumService:
         self.logger.info("Dependency tree complete... Will init execution\n\n")
         self.logger.info("Execution started. Requested features: {features}"
                          .format(features='All' if features is None else ', '.join(features)))
+
+        # Specific features ?
+        features = self.runtime.keys() if features is None else features
+        for feature in features:
+            print('Executing "%s" feature' % feature)
+            if feature in self.runtime:
+                feature_obj = self.runtime[feature]
+                feature_obj['status'] = ExecutionStatus.RUNNING
+                for scenario in feature_obj['scenarios'].keys():
+                    scenario_obj = self.runtime[feature]['scenarios'][scenario]
+                    if scenario_obj['status'] != ExecutionStatus.SKIPPED:
+                        scenario_obj['status'] = ExecutionStatus.RUNNING
+                        for step in scenario_obj['steps']:
+                            if step['status'] == ExecutionStatus.PENDING_EXECUTION:
+                                step['status'] = ExecutionStatus.RUNNING
+                                step_method = step['ref']
+                                step_args = step['args']
+                                try:
+                                    step_start = datetime.now()
+                                    step_method(*step_args)
+                                    step['status'] = ExecutionStatus.PASSED
+                                    step['details'] = (datetime.now() - step_start).microseconds / 1e3
+                                except:
+                                    step['status'] = ExecutionStatus.FAILED
+                                    scenario_obj['status'] = ExecutionStatus.FAILED
+                                    feature_obj['status'] = ExecutionStatus.FAILED
+                                    step['details'] = traceback.format_exc()
+                            else:
+                                scenario_obj['status'] = step['status']
+                                feature_obj['status'] = step['status']
+                        if scenario_obj['status'] == ExecutionStatus.RUNNING:
+                            scenario_obj['status'] = ExecutionStatus.PASSED
+                    else:
+                        feature_obj['status'] = ExecutionStatus.SKIPPED
+
+                if feature_obj['status'] == ExecutionStatus.RUNNING:
+                    feature_obj['status'] = ExecutionStatus.PASSED
+
+            else:
+                self.logger.error('Requested feature "%s" was not present on test files' % feature)
+
+        self.display_results()

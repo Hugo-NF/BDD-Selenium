@@ -19,7 +19,7 @@ from generators import *
 # Program definitions, constants, enums,....
 from definitions import *
 
-from selenium_service import SeleniumService
+from execution_service import ExecutionService
 
 # PEP 8 Conventions
 # https://www.python.org/dev/peps/pep-0008/#overriding-principle
@@ -113,7 +113,7 @@ if __name__ == '__main__':
             logger.error("Unknown %s generator option" % args.generate[0])
 
     elif args.environment:
-        service = SeleniumService(args.environment)
+        service = ExecutionService(args.environment)
         if args.run:
             service.run(args.run.split(","))
         else:

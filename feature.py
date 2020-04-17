@@ -239,11 +239,11 @@ class Feature:
         try:
             di_module = steps[module_key]
             verb_class = getattr(di_module, verb.capitalize())
-            return staticmethod(getattr(verb_class, step_name))
+            return getattr(verb_class, step_name)
         except (AttributeError, KeyError):
             di_module = steps['common_steps']
             verb_class = getattr(di_module, verb.capitalize())
-            return staticmethod(getattr(verb_class, step_name))
+            return getattr(verb_class, step_name)
 
     @staticmethod
     def get_factory_ref(factory_class_name, factories, parent_feature):
@@ -265,12 +265,12 @@ class Feature:
             di_module = factories[module_key]
             factory_class = getattr(di_module, factory_class_name)
             run_method = getattr(factory_class, 'run')
-            return staticmethod(run_method)
+            return run_method
         except (AttributeError, KeyError):
             di_module = factories['common_factories']
             factory_class = getattr(di_module, factory_class_name)
             run_method = getattr(factory_class, 'run')
-            return staticmethod(run_method)
+            return run_method
 
     @staticmethod
     def process_step_name(step_name):
