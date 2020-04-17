@@ -1,5 +1,6 @@
-"""
-This file, as the name suggests, the entry point for executing the test session
+"""BDD-Selenium - main.py
+This file, as the name suggests, is the entry point for executing the test session
+Argparser is configured in this file, thus providing help text for arguments
 """
 
 # CLI inputs support built-in package
@@ -29,7 +30,7 @@ def setup_logging():
 
     The logger settings are defined in settings.json
 
-    :return:
+    :return: void
     """
     try:
         with open('settings.json', 'r') as settings_file:
@@ -76,7 +77,6 @@ def setup_logging():
 
 
 if __name__ == '__main__':
-
     # Setting up log module
     setup_logging()
 

@@ -4,14 +4,41 @@ import re
 
 
 class Feature:
+    """
+    Feature
+    This class is responsible for processing a entire .feature file
+    Each file should build an instance of this class
+
+    Attributes:
+        logger: logger instance gathered from logging module, acts like a singleton
+        file_content: array of strings containing the file after pre-processing
+    """
 
     def __init__(self, file_path, steps, env_variables, locale, features_dict):
+        """
+        Class Feature constructor
+
+        :param file_path: file path to feature file
+        :param steps: dictionary with loaded_steps (read-only)
+        :param env_variables: dictionary with environment variables (read-only)
+        :param locale: dictionary of the loaded locale (read-only)
+        :param features_dict: dictionary with the traceback of the features (modified by reference)
+        """
         self.logger = logging.getLogger(LOGGER_INSTANCE)
         self.file_content = pre_process_file(file_path)
 
         self.process_file(steps, env_variables, locale, features_dict)
 
     def process_file(self, steps, env_variables, locale, features_dict):
+        """
+        Iterates through each line of the file_content variable and takes the correct action
+
+        :param steps: dictionary with loaded_steps (read-only)
+        :param env_variables: dictionary with environment variables (read-only)
+        :param locale: dictionary of the loaded locale (read-only)
+        :param features_dict: dictionary with the traceback of the features (modified by reference)
+        :return: void
+        """
         current_feature = ""
         current_scenario = ""
         current_skipped = ""
@@ -123,6 +150,12 @@ class Feature:
 
     @staticmethod
     def is_verb(locale, candidate):
+        """
+        Tests (True or False) if the candidate word is a verb present in locale
+        :param locale: locale dictionary
+        :param candidate: string to be checked
+        :return: True if is valid verb, False otherwise
+        """
         if candidate in locale['verbs']:
             return True
         else:
@@ -130,6 +163,14 @@ class Feature:
 
     @staticmethod
     def update_feature_desc(verb, name, features_dict, parent_feature):
+        """
+        Updates features dictionary runtime with feature description
+        :param verb: verb (second group)
+        :param name: remaning line (third group)
+        :param features_dict: dictionary with the traceback of the features (modified by reference)
+        :param parent_feature: reference to the feature that we'll modify inside features_dict
+        :return: void
+        """
         if parent_feature in features_dict:
             line = verb.capitalize() + ' ' + name
             # First line
@@ -141,6 +182,19 @@ class Feature:
 
     @staticmethod
     def get_step_ref(current_feature, steps, verb, step_name):
+        """
+        Search for a step definition inside feature_steps module
+        If step is not found inside feature_steps, search inside common_steps
+        If not found inside common_steps, raise AttributeError
+
+        :param current_feature: name of feature
+        :param steps: dictionary with loaded_steps (read-only)
+        :param verb: verb of the step in .feature file
+        :param step_name: name of the step in .feature file
+        :raise AttributeError (Step undefined)
+        :raise KeyError (Module not loaded)
+        :return: staticmethod reference pointer
+        """
         module_key = current_feature.lower() + '_steps'
         try:
             di_module = steps[module_key]
@@ -153,6 +207,11 @@ class Feature:
 
     @staticmethod
     def process_step_name(step_name):
+        """
+        Text processing step_name to Python PEP 8 naming conventions which should be used to write steps
+        :param step_name: step name written in .feature file
+        :return: dictionary describing a 'empty' step
+        """
         step_name = step_name.lstrip()
         step_name = step_name.rstrip()
         step_dict = {
@@ -169,6 +228,12 @@ class Feature:
         return step_dict
 
     def process_feature(self, name, features_dict):
+        """
+        Returns a dictionary describing an empty feature
+        :param name: name of the feature (note that an file may contain multiple features)
+        :param features_dict: dictionary with the traceback of the features (modified by reference)
+        :return: param: name
+        """
         if name not in features_dict:
             features_dict[name] = {'description': None, 'scenarios': {}, 'status': ExecutionStatus.PENDING}
         else:
@@ -176,6 +241,14 @@ class Feature:
         return name
 
     def process_scenario(self, name, features_dict, parent_feature):
+        """
+        Returns a dictionary describing an empty scenario
+
+        :param name: name of the scenario in .feature file
+        :param features_dict: dictionary with the traceback of the features (modified by reference)
+        :param parent_feature: reference to the feature that we'll modify inside features_dict
+        :return: param: name
+        """
         if name not in features_dict[parent_feature]:
             features_dict[parent_feature]['scenarios'][name] = {'steps': [], 'status': ExecutionStatus.PENDING}
         else:
