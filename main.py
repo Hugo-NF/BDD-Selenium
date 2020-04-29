@@ -20,6 +20,8 @@ from generators import *
 from definitions import *
 
 from execution_service import ExecutionService
+from selenium_runtime import selenium_runtime
+
 
 # PEP 8 Conventions
 # https://www.python.org/dev/peps/pep-0008/#overriding-principle
@@ -47,6 +49,9 @@ def setup_logging():
             encoding = get_value_or_default(env_settings, 'encoding', 'utf8')
             flush_delay = get_value_or_default(env_settings, 'flush_delay', False)
 
+            # Setting logging target folder
+            verify_directory(path_format, True)
+
             # Setting configuration for logger instance 'SeleniumBDD.root'
             logger = logging.getLogger(LOGGER_INSTANCE)
             logger.setLevel(minimum_level)
@@ -72,7 +77,8 @@ def setup_logging():
             logger.addHandler(console_handler)
 
     except FileNotFoundError:
-        logger.critical("FATAL ERROR: settings.json file %s do NOT exists." % args.environment)
+        logger.critical("FATAL ERROR: settings.json file do NOT exists.")
+        selenium_runtime.browser.quit()
         exit(ErrorCodes.MISSING_SETTINGS)
 
 
@@ -98,11 +104,11 @@ if __name__ == '__main__':
 
     parser_group.add_argument('-g', '--generate', nargs=2,
                               help='Generator command.'
-                              '\n\tYou can use this tool to generate the files needed, probably inside a new project.'
-                              '\n\tAvailable options:'
-                              '\n\t\tENV [output_path]: generates a new environment json file'
-                              '\n\t\tFEATURES [output_path]: generates a new features path with examples'
-                              '\n\t\tALL [output_path]: generates everything you need')
+                                   '\n\tYou can use this tool to generate the files needed, probably inside a new project.'
+                                   '\n\tAvailable options:'
+                                   '\n\t\tENV [output_path]: generates a new environment json file'
+                                   '\n\t\tFEATURES [output_path]: generates a new features path with examples'
+                                   '\n\t\tALL [output_path]: generates everything you need')
     args = parser.parse_args()
 
     if args.generate:
@@ -119,3 +125,4 @@ if __name__ == '__main__':
         else:
             service.run()
 
+    selenium_runtime.browser.quit()

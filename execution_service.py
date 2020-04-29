@@ -55,6 +55,7 @@ class ExecutionService:
         except FileNotFoundError:
             self.logger.error("Could not found environment JSON at: {path}. Check the address and try again."
                               .format(path=env_path))
+            selenium_runtime.browser.quit()
             exit(ErrorCodes.MISSING_ENVIRONMENT)
 
     def load_locale(self):
@@ -72,10 +73,12 @@ class ExecutionService:
 
         except KeyError:
             self.logger.error("Variable language not found in environment.json")
+            selenium_runtime.browser.quit()
             exit(ErrorCodes.MISSING_PROPERTY)
         except FileNotFoundError:
             self.logger.error("Could not found locale file: {locale_path}. Check the address and try again."
                               .format(locale_path=locale_path))
+            selenium_runtime.browser.quit()
             exit(ErrorCodes.MISSING_LOCALE)
 
     def find_files(self):
@@ -195,6 +198,4 @@ class ExecutionService:
 
             else:
                 self.logger.error('Requested feature "%s" was not present on test files' % feature)
-
-        selenium_runtime.browser.quit()
         self.display_results()

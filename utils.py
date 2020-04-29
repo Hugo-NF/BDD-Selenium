@@ -3,7 +3,6 @@ This file contains helper methods that do not depend on the application context
 and it's perfectly reusable in other projects
 """
 
-
 import os
 from re import sub, match
 from definitions import *
@@ -39,6 +38,22 @@ def extract_filename(full_path):
     :return: tuple containing (path, filename), remains empty if not present in full_path
     """
     return os.path.basename(full_path)
+
+
+def verify_directory(full_path, create=False):
+    """Checks the existence of an directory, creates it if the flag create it's set
+
+    Args:
+        full_path: full path of a file or directory
+        create: create directory if not exists, defaults False
+
+    Returns: boolean testing the existence of directory
+    """
+    directory_path = extract_path(full_path)[0]
+    exists = os.path.exists(directory_path)
+    if create and (not exists):
+        os.mkdir(directory_path)
+    return exists
 
 
 def extract_module_name(full_path):
