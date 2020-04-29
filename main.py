@@ -8,6 +8,7 @@ import argparse
 
 # Logging built-in package
 import logging
+import sys
 from logging.handlers import RotatingFileHandler
 
 # Datetime built-in package
@@ -109,20 +110,22 @@ if __name__ == '__main__':
                                    '\n\t\tENV [output_path]: generates a new environment json file'
                                    '\n\t\tFEATURES [output_path]: generates a new features path with examples'
                                    '\n\t\tALL [output_path]: generates everything you need')
-    args = parser.parse_args()
 
-    if args.generate:
-        try:
-            generator = generators[args.generate[0]]
-            generator(args.generate[1])
-        except KeyError:
-            logger.error("Unknown %s generator option" % args.generate[0])
+    try:
+        args = parser.parse_args()
 
-    elif args.environment:
-        service = ExecutionService(args.environment)
-        if args.run:
-            service.run(args.run.split(","))
-        else:
-            service.run()
+        if args.generate:
+            try:
+                generator = generators[args.generate[0]]
+                generator(args.generate[1])
+            except KeyError:
+                logger.error("Unknown %s generator option" % args.generate[0])
 
-    selenium_runtime.browser.quit()
+        elif args.environment:
+            service = ExecutionService(args.environment)
+            if args.run:
+                service.run(args.run.split(","))
+            else:
+                service.run()
+    finally:
+        selenium_runtime.browser.quit()
