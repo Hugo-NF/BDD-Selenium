@@ -112,6 +112,73 @@ class ExecutionService:
         self.logger.info("Testing session completed. Displaying results:")
         self.logger.info(self.runtime)
 
+        display_names = {
+            ExecutionStatus.PASSED: 'PASSED',
+            ExecutionStatus.SKIPPED: 'SKIPPED'
+        }
+        features = {
+            'total': 0,
+            'passed': 0,
+            'failed': 0
+        }
+        scenarios = {
+            'total': 0,
+            'passed': 0,
+            'skipped': 0,
+            'failed': 0
+        }
+        steps = {
+            'total': 0,
+            'passed': 0,
+            'skipped': 0,
+            'failed': 0
+        }
+
+        for feature_name, feature_value in self.runtime.items():
+            features['total'] += 1
+            if feature_value['status'] == ExecutionStatus.PASSED:
+                features['passed'] += 1
+                print("[{status}][{elapsed} ms] - Feature {name}\n\t{description}".format(
+                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        elapsed=round(feature_value['exec_time'], 2),
+                        name=feature_name,
+                        description=description_display(feature_value['description'])))
+            else:
+                features['failed'] += 1
+                print("[{status}] - Feature {name}\n\t{description}".format(
+                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        name=feature_name,
+                        description=description_display(feature_value['description'])))
+
+            print("Scenarios:\n")
+            for scenario_name, scenario_value in feature_value['scenarios'].items():
+                scenarios['total'] += 1
+                if scenario_value['status'] == ExecutionStatus.PASSED:
+                    scenarios['passed'] += 1
+                    print("\t[{status}][{elapsed} ms] - Scenario: {name}".format(
+                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        elapsed=round(scenario_value['exec_time'], 2),
+                        name=scenario_name
+                    ))
+                elif scenario_value['status'] == ExecutionStatus.SKIPPED:
+                    scenarios['skipped'] += 1
+                    print("\t[{status}] - Scenario: {name}".format(
+                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        name=scenario_name
+                    ))
+                else:
+                    scenarios['failed'] += 1
+                    print("\t[{status}] - Scenario: {name}".format(
+                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        name=scenario_name
+                    ))
+                    print("Steps:\n")
+                    for step in scenario_value['steps']:
+                        print("\t\t[{status}][{elapsed}] - {name}")
+                        # TO BE CONTINUED
+                        # Count steps and display results
+
+
     def run(self, features=None):
         """Opens all the detected files and handles the execution by calling other modules
 
@@ -180,6 +247,7 @@ class ExecutionService:
                                     step_method(*step_args)
                                     step['status'] = ExecutionStatus.PASSED
                                     step['details'] = (datetime.now() - step_start).microseconds / 1e3
+                                    scenario_obj['exec_time'] += step['details']
                                 except:
                                     step['status'] = ExecutionStatus.FAILED
                                     scenario_obj['status'] = ExecutionStatus.FAILED
@@ -190,9 +258,9 @@ class ExecutionService:
                                 feature_obj['status'] = step['status']
                         if scenario_obj['status'] == ExecutionStatus.RUNNING:
                             scenario_obj['status'] = ExecutionStatus.PASSED
+                            feature_obj['exec_time'] += scenario_obj['exec_time']
                     else:
                         feature_obj['status'] = ExecutionStatus.SKIPPED
-
                 if feature_obj['status'] == ExecutionStatus.RUNNING:
                     feature_obj['status'] = ExecutionStatus.PASSED
 

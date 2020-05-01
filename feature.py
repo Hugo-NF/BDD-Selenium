@@ -314,7 +314,7 @@ class Feature:
         :return: param: name
         """
         if name not in features_dict:
-            features_dict[name] = {'description': None, 'scenarios': {}, 'status': ExecutionStatus.PENDING}
+            features_dict[name] = {'description': None, 'scenarios': {}, 'exec_time': 0, 'status': ExecutionStatus.PENDING}
         else:
             self.logger.warning("Feature %s is defined in more than once" % name)
         return name
@@ -329,7 +329,7 @@ class Feature:
         :return: param: name
         """
         if name not in features_dict[parent_feature]:
-            features_dict[parent_feature]['scenarios'][name] = {'steps': [], 'status': ExecutionStatus.PENDING}
+            features_dict[parent_feature]['scenarios'][name] = {'steps': [], 'exec_time': 0, 'status': ExecutionStatus.PENDING}
         else:
             self.logger.warning("Scenario %s was redeclared. Ignoring redeclaration..." % name)
         return name

@@ -90,6 +90,10 @@ def get_value_or_default(dictionary, key, default_value):
         return default_value
 
 
+def description_display(text):
+    return sub(RegularExpressions.regexps['line_break'], ', ', text)
+
+
 def pre_process_file(file_path):
     """Executes the pre-processing task on a given file
     Opens the file with (file_path) filename and removes:
