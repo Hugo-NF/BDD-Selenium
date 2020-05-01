@@ -8,6 +8,6 @@
     "log_format": "%(asctime)s :: %(levelname)s - %(message)s",
     "asctime_format'": "%d/%m/%y %H:%M:%S",
     "encoding": "utf8",
-    "flush_delay": false
+    "flush_delay": true
   }
 }

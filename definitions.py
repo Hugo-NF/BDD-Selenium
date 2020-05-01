@@ -32,7 +32,7 @@ class ErrorCodes(Enum):
 
 
 # Execution status codes for a step
-class ExecutionStatus(Enum):
+class ExecutionStatus(int, Enum):
     """
     The ExecutionStatus class defines an Enumeration of all possible states of the entities of the software
     These status codes are used in Features, Factories and Steps

@@ -10,6 +10,7 @@ import logging
 import sys
 import traceback
 import yaml
+import pickle
 
 from datetime import datetime
 from feature import Feature
@@ -112,6 +113,14 @@ class ExecutionService:
         self.logger.info("Testing session completed. Displaying results:")
         self.logger.info(self.runtime)
 
+        if get_value_or_default(self.environment, 'dump_results_json', False):
+            current_timestamp = datetime.now()
+            self.logger.info("Dumping results to %s_results.json file" % current_timestamp)
+            verify_directory('results/', True)
+            with open('results/{timestamp}_results.json'.format(timestamp=current_timestamp), 'w+', encoding='utf8') \
+                    as fp:
+                pickle.dump(self.runtime, fp)
+
         display_names = {
             ExecutionStatus.PASSED: 'PASSED',
             ExecutionStatus.SKIPPED: 'SKIPPED'
@@ -139,18 +148,18 @@ class ExecutionService:
             if feature_value['status'] == ExecutionStatus.PASSED:
                 features['passed'] += 1
                 print("[{status}][{elapsed} ms] - Feature {name}\n\t{description}".format(
-                        status=display_names.get(feature_value['status'], 'FAILED'),
-                        elapsed=round(feature_value['exec_time'], 2),
-                        name=feature_name,
-                        description=description_display(feature_value['description'])))
+                    status=display_names.get(feature_value['status'], 'FAILED'),
+                    elapsed=round(feature_value['exec_time'], 2),
+                    name=feature_name,
+                    description=description_display(feature_value['description'])))
             else:
                 features['failed'] += 1
                 print("[{status}] - Feature {name}\n\t{description}".format(
-                        status=display_names.get(feature_value['status'], 'FAILED'),
-                        name=feature_name,
-                        description=description_display(feature_value['description'])))
+                    status=display_names.get(feature_value['status'], 'FAILED'),
+                    name=feature_name,
+                    description=description_display(feature_value['description'])))
 
-            print("Scenarios:\n")
+            print("Scenarios:")
             for scenario_name, scenario_value in feature_value['scenarios'].items():
                 scenarios['total'] += 1
                 if scenario_value['status'] == ExecutionStatus.PASSED:
@@ -172,12 +181,38 @@ class ExecutionService:
                         status=display_names.get(feature_value['status'], 'FAILED'),
                         name=scenario_name
                     ))
-                    print("Steps:\n")
+                    print("Steps:")
                     for step in scenario_value['steps']:
-                        print("\t\t[{status}][{elapsed}] - {name}")
-                        # TO BE CONTINUED
-                        # Count steps and display results
+                        steps['total'] += 1
+                        if step['status'] == ExecutionStatus.PASSED:
+                            steps['passed'] += 1
+                            print("\t\t[{status}][{elapsed} ms] - {name}".format(
+                                status=display_names.get(step['status'], 'FAILED'),
+                                elapsed=round(step['details'], 2),
+                                name=' '.join([step['verb'], step['name']])
+                            ))
+                        elif step['status'] == ExecutionStatus.SKIPPED:
+                            steps['skipped'] += 1
+                            print("\t\t[{status}] - {name}".format(
+                                status=display_names.get(step['status'], 'FAILED'),
+                                name=' '.join([step['verb'], step['name']])
+                            ))
+                        else:
+                            steps['failed'] += 1
+                            print("\t\t[{status}] - {name}. Exception details:\n{exception}".format(
+                                status=display_names.get(step['status'], 'FAILED'),
+                                name=' '.join([step['verb'], step['name']]),
+                                exception=step['details']
+                            ))
+        print("Results summary:")
+        print("Features:\n%d detected\n\t%d passed\n\t%d skipped\n\t%d failed"
+              % (features['total'], features['passed'], features['features'], features['failed']))
 
+        print("Scenarios:\n%d detected\n\t%d passed\n\t%d skipped\n\t%d failed"
+              % (scenarios['total'], scenarios['passed'], scenarios['features'], scenarios['failed']))
+
+        print("Steps:\n%d detected\n\t%d passed\n\t%d skipped\n\t%d failed"
+              % (steps['total'], steps['passed'], steps['features'], steps['failed']))
 
     def run(self, features=None):
         """Opens all the detected files and handles the execution by calling other modules
