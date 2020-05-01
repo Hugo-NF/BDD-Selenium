@@ -113,14 +113,6 @@ class ExecutionService:
         self.logger.info("Testing session completed. Displaying results:")
         self.logger.info(self.runtime)
 
-        if get_value_or_default(self.environment, 'dump_results_json', False):
-            current_timestamp = datetime.now()
-            self.logger.info("Dumping results to %s_results.json file" % current_timestamp)
-            verify_directory('results/', True)
-            with open('results/{timestamp}_results.json'.format(timestamp=current_timestamp), 'w+', encoding='utf8') \
-                    as fp:
-                pickle.dump(self.runtime, fp)
-
         display_names = {
             ExecutionStatus.PASSED: 'PASSED',
             ExecutionStatus.SKIPPED: 'SKIPPED'
@@ -159,7 +151,7 @@ class ExecutionService:
                     name=feature_name,
                     description=description_display(feature_value['description'])))
 
-            print("Scenarios:")
+            print("\tScenarios:")
             for scenario_name, scenario_value in feature_value['scenarios'].items():
                 scenarios['total'] += 1
                 if scenario_value['status'] == ExecutionStatus.PASSED:
@@ -181,7 +173,7 @@ class ExecutionService:
                         status=display_names.get(feature_value['status'], 'FAILED'),
                         name=scenario_name
                     ))
-                    print("Steps:")
+                    print("\t\tSteps:")
                     for step in scenario_value['steps']:
                         steps['total'] += 1
                         if step['status'] == ExecutionStatus.PASSED:
@@ -204,15 +196,12 @@ class ExecutionService:
                                 name=' '.join([step['verb'], step['name']]),
                                 exception=step['details']
                             ))
-        print("Results summary:")
-        print("Features:\n%d detected\n\t%d passed\n\t%d skipped\n\t%d failed"
-              % (features['total'], features['passed'], features['features'], features['failed']))
+        print("\nResults summary:")
+        print("Features:\n%d detected\n\t%d passed\n\t%d failed"
+              % (features['total'], features['passed'], features['failed']))
 
         print("Scenarios:\n%d detected\n\t%d passed\n\t%d skipped\n\t%d failed"
-              % (scenarios['total'], scenarios['passed'], scenarios['features'], scenarios['failed']))
-
-        print("Steps:\n%d detected\n\t%d passed\n\t%d skipped\n\t%d failed"
-              % (steps['total'], steps['passed'], steps['features'], steps['failed']))
+              % (scenarios['total'], scenarios['passed'], scenarios['skipped'], scenarios['failed']))
 
     def run(self, features=None):
         """Opens all the detected files and handles the execution by calling other modules

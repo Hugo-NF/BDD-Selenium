@@ -1,7 +1,6 @@
 {
   "language": "en-US",
   "tab_size": 2,
-  "dump_results_json": true,
   "paths": {
     "features_path": "features/",
     "steps_path": "steps/",
