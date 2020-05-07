@@ -2,8 +2,8 @@ import logging
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.expected_conditions import invisibility_of_element
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 
 # Supported browsers
 from selenium.webdriver import Firefox
@@ -75,8 +75,16 @@ class SeleniumRuntime:
     def current_url(self):
         return self.browser.current_url
 
-    def wait_for_loader(self, timeout=30):
-        WebDriverWait(self.browser, timeout).until(invisibility_of_element('.loader'))
+    def wait_for_element(self, value, by=By.ID, timeout=30):
+        return WebDriverWait(self.browser, timeout).until(
+            expected_conditions.presence_of_element_located((by, value))
+        )
+
+    def wait_for_redirect(self, target_url, timeout=30):
+        return WebDriverWait(self.browser, timeout).until(
+            expected_conditions.url_to_be(target_url)
+        )
+
 
     @staticmethod
     def assert_class(element, class_name):

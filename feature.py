@@ -151,7 +151,6 @@ class Feature:
                             try:
                                 step_ref = self.get_step_ref(current_feature, steps, locale['verbs'][verb],
                                                              step_attr['method_name'])
-                                step_attr['verb'] = verb
                                 step_attr['ref'] = step_ref
                                 step_attr['status'] = ExecutionStatus.PENDING_EXECUTION
                             except (AttributeError, KeyError):
@@ -160,6 +159,7 @@ class Feature:
                                 step_attr['status'] = ExecutionStatus.MISSING_REF
 
                             finally:
+                                step_attr['verb'] = locale['verbs'][verb]
                                 scenario['steps'].append(step_attr)
 
                     else:
@@ -291,6 +291,8 @@ class Feature:
 
         step_name = step_name.lower()
         step_name = re.sub(RegularExpressions.regexps['step_args'], '', step_name)
+        step_name = step_name.lstrip()
+        step_name = step_name.rstrip()
         step_dict['method_name'] = re.sub(RegularExpressions.regexps['spaces'], '_', step_name)
         return step_dict
 

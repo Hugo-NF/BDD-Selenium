@@ -5,22 +5,25 @@ Feature: Login
   I want to sign in and sign out the application
 
   Scenario: Correct Password
-    Given that I am at "http://orionconnect.azurewebsites.net/Auth/Login" page
+    Given that I am at "/Auth/Login" page
     When I fill the form with
       |Email|hugo.fonseca@grupoorion.eng.br|
       |Password|123456789|
     And I submit form
-    Then I should be redirected to "http://orionconnect.azurewebsites.net/Dashboard" page
+    Then I should be redirected to "/Dashboard" page
 
-Feature: Register
-  As a not registered user
-  I want to register on platform
-
-  Scenario: Correct Email
-    Do skip
-    Given that I am at "register" page
+  Scenario: Wrong Password
+    Given that I am at "/Auth/Login" page
     When I fill the form with
       |Email|hugo.fonseca@grupoorion.eng.br|
-      |Password|123456789|
-    And I click on "Registrar" button
-    Then I should be redirected to "Home" page
+      |Password|123456                     |
+    And I submit form
+    Then I should see one "alert" with "Credenciais inválidas"
+#
+#  Scenario: Pending Activation
+#    Given that I am at "/Auth/Login" page
+#    When I fill the form with
+#      |Email|hugonfonseca@hotmail.com|
+#      |Password|123456               |
+#    And I submit form
+#    Then I should see one "alert" with "Sua conta ainda não foi ativada!"

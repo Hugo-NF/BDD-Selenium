@@ -62,6 +62,6 @@ class RegularExpressions:
         'statement': r'^(\s*)(\w+):\s*(.*)$',
         'verb': r'^(\s*)([\w]+)[^:](.*)',
         'table': r'^(\s*)\|(.*)\|(.*)\|',
-        'step_args': r'"(.+)"',
+        'step_args': r'"([^"]+)"',
         'spaces': r'\s+'
     }

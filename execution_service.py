@@ -157,20 +157,20 @@ class ExecutionService:
                 if scenario_value['status'] == ExecutionStatus.PASSED:
                     scenarios['passed'] += 1
                     print("\t[{status}][{elapsed} ms] - Scenario: {name}".format(
-                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        status=display_names.get(scenario_value['status'], 'FAILED'),
                         elapsed=round(scenario_value['exec_time'], 2),
                         name=scenario_name
                     ))
                 elif scenario_value['status'] == ExecutionStatus.SKIPPED:
                     scenarios['skipped'] += 1
                     print("\t[{status}] - Scenario: {name}".format(
-                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        status=display_names.get(scenario_value['status'], 'FAILED'),
                         name=scenario_name
                     ))
                 else:
                     scenarios['failed'] += 1
                     print("\t[{status}] - Scenario: {name}".format(
-                        status=display_names.get(feature_value['status'], 'FAILED'),
+                        status=display_names.get(scenario_value['status'], 'FAILED'),
                         name=scenario_name
                     ))
                     print("\t\tSteps:")
@@ -194,7 +194,7 @@ class ExecutionService:
                             print("\t\t[{status}] - {name}. Exception details:\n{exception}".format(
                                 status=display_names.get(step['status'], 'FAILED'),
                                 name=' '.join([step['verb'], step['name']]),
-                                exception=step['details']
+                                exception=step['details'] if step['details'] is not None else step['status']
                             ))
         print("\nResults summary:")
         print("Features:\n%d detected\n\t%d passed\n\t%d failed"
