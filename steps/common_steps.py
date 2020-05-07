@@ -27,6 +27,10 @@ class When:
     def i_fill_the_form_with(table):
         browser.fill_form(table)
 
+    @staticmethod
+    def i_fill_selects_with(table):
+        browser.fill_selects(table)
+
 
 class And:
     @staticmethod
