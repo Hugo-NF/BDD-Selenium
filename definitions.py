@@ -7,7 +7,7 @@ from enum import Enum
 
 # Macro definitions
 """ The following variables are used as macros across the program """
-VERSION = '0.0.2beta'
+VERSION = '0.9.0beta'
 LOGGER_INSTANCE = "SeleniumBDD.root"
 LOCALES_ROOT = "locales/"
 TARGET_BROWSER = 'firefox'

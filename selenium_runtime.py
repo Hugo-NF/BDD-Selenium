@@ -41,6 +41,7 @@ class SeleniumRuntime:
     def fill_form(self, table):
         for field, value in table.items():
             element = self.browser.find_element_by_id(field)
+            element.clear()
             element.send_keys(value)
 
     def click(self, value, by=By.ID):
@@ -84,7 +85,6 @@ class SeleniumRuntime:
         return WebDriverWait(self.browser, timeout).until(
             expected_conditions.url_to_be(target_url)
         )
-
 
     @staticmethod
     def assert_class(element, class_name):

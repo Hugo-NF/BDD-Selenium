@@ -235,7 +235,7 @@ class Feature:
         :raise KeyError (Module not loaded)
         :return: staticmethod reference pointer
         """
-        module_key = current_feature.lower() + '_steps'
+        module_key = sub(RegularExpressions.regexps['spaces'], '_', current_feature).lower() + '_steps'
         try:
             di_module = steps[module_key]
             verb_class = getattr(di_module, verb.capitalize())
@@ -259,7 +259,7 @@ class Feature:
         :raise KeyError (Module not loaded)
         :return: staticmethod reference pointer
         """
-        module_key = parent_feature.lower() + '_factories'
+        module_key = sub(RegularExpressions.regexps['spaces'], '_', parent_feature).lower() + '_factories'
 
         try:
             di_module = factories[module_key]

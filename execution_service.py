@@ -108,7 +108,7 @@ class ExecutionService:
             'factories': factories_files
         }
 
-    def display_results(self):
+    def display_results(self, selected_features):
         """Pretty printer of the results, dumps to JSON if requested in environment"""
         self.logger.info("Testing session completed. Displaying results:")
         self.logger.info(self.runtime)
@@ -135,7 +135,8 @@ class ExecutionService:
             'failed': 0
         }
 
-        for feature_name, feature_value in self.runtime.items():
+        ran_features = dict(filter(lambda item: item[0] in selected_features, self.runtime.items()))
+        for feature_name, feature_value in ran_features.items():
             features['total'] += 1
             if feature_value['status'] == ExecutionStatus.PASSED:
                 features['passed'] += 1
@@ -290,4 +291,4 @@ class ExecutionService:
 
             else:
                 self.logger.error('Requested feature "%s" was not present on test files' % feature)
-        self.display_results()
+        self.display_results(features)

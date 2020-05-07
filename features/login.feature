@@ -12,18 +12,18 @@ Feature: Login
     And I submit form
     Then I should be redirected to "/Dashboard" page
 
-  Scenario: Wrong Password
+  Scenario: Wrong Password or Inexistent Account
     Given that I am at "/Auth/Login" page
     When I fill the form with
       |Email|hugo.fonseca@grupoorion.eng.br|
       |Password|123456                     |
     And I submit form
     Then I should see one "alert" with "Credenciais inválidas"
-#
-#  Scenario: Pending Activation
-#    Given that I am at "/Auth/Login" page
-#    When I fill the form with
-#      |Email|hugonfonseca@hotmail.com|
-#      |Password|123456               |
-#    And I submit form
-#    Then I should see one "alert" with "Sua conta ainda não foi ativada!"
+
+  Scenario: Pending Activation
+    Given that I am at "/Auth/Login" page
+    When I fill the form with
+      |Email|hugonfonseca@hotmail.com|
+      |Password|123456               |
+    And I submit form
+    Then I should see one "alert" with "Sua conta ainda não foi ativada!"

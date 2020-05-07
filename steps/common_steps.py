@@ -30,5 +30,11 @@ class When:
 
 class And:
     @staticmethod
+    def i_click_on_with(selector, value):
+        if selector == 'xpath':
+            element = browser.wait_for_element(value, By.XPATH)
+            element.click()
+
+    @staticmethod
     def i_submit_form():
         browser.submit_form()
