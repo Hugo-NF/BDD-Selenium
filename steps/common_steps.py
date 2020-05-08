@@ -29,6 +29,7 @@ class When:
 
     @staticmethod
     def i_fill_selects_with(table):
+        sleep(5)
         browser.fill_selects(table)
 
 

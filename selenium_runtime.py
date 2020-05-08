@@ -45,14 +45,8 @@ class SeleniumRuntime:
             element.send_keys(value)
 
     def fill_selects(self, table):
-        print(table)
-        for field, value in table.items():
-            selects = self.browser.find_elements_by_id(field)
-            for select in selects:
-                options = select.find_elements_by_tag_name('option')
-                for option in options:
-                    if option.text == value:
-                        option.click()
+        for field_name, field_value in table.items():
+            self.wait_for_element(field_value, By.XPATH).click()
 
     def click(self, value, by=By.ID):
         element = self.browser.find_element(by, value)

@@ -20,8 +20,16 @@ Feature: Navigation
     And I click on "text" with "Trocar edifício"
     Then I should be redirected to "/" page
     When I fill selects with
-      |enterpriseSelect|ORION TELECOMUNICAÇÕES ENGENHARIA S/A|
-      |buildingSelect|Escritório - SP|
+      |enterpriseSelect|/html/body/div[2]/div[2]/main/div/div/div/div/div/select[1]/option|
+      |buildingSelect|/html/body/div[2]/div[2]/main/div/div/div/div/div/select[2]/option[1]|
     And I click on "text" with "Alterar"
     Then I should be redirected to "/Dashboard" page
     Then I should see one "list-group-item" with "Escritório-SP"
+    And I click on "text" with "Trocar edifício"
+    Then I should be redirected to "/" page
+    When I fill selects with
+      |enterpriseSelect|/html/body/div[2]/div[2]/main/div/div/div/div/div/select[1]/option|
+      |buildingSelect|/html/body/div[2]/div[2]/main/div/div/div/div/div/select[2]/option[2]|
+    And I click on "text" with "Alterar"
+    Then I should be redirected to "/Dashboard" page
+    Then I should see one "list-group-item" with "Escritório-BSB"
