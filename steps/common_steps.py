@@ -39,6 +39,9 @@ class And:
         if selector == 'xpath':
             element = browser.wait_for_element(value, By.XPATH)
             element.click()
+        if selector == 'id':
+            element = browser.wait_for_element(value, By.ID)
+            element.click()
 
     @staticmethod
     def i_submit_form():
